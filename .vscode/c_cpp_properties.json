@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cppStandard": "c++17",
+            "cStandard": "c11",
+            "browse": {
+                "path": [
+                    "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.10240.0\\ucrt",
+                    "D:\\VS\\BuildTools\\VC\\Tools\\MSVC\\14.33.31629\\include"
+                ]
+            },
+            "compilerPath": "D:/VS/BuildTools/VC/Tools/MSVC/14.33.31629/bin/Hostx64/x64/cl.exe",
+            "intelliSenseMode": "windows-msvc-x64",
+            "compilerArgs": [
+                "-LC:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64",
+                "-LD:\\VS\\BuildTools\\VC\\Tools\\MSVC\\14.16.27023\\atlmfc\\lib\\x64"
+            ]
+        }
+    ],
+    "version": 4
+}
