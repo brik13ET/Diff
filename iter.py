@@ -20,6 +20,9 @@ Fi:list[float] = []
 
 N: int
 
+def _H (_N: int) -> float:
+	return (To - From) / (_N-1)
+
 def p (n: float) -> float:
 	 return 2
 def q ( n: float) -> float:
@@ -56,54 +59,66 @@ def DDy( xi: int, Y: list[float],  H: float, N: int) -> float:
 def lval( xi: int,  Y: list[float],  H: float, N: int) -> float:
     return DDy(xi,Y,H,N) + Dy(xi,Y,H,N)*Pi[xi] + Y[xi]*Qi[xi];
 
-def iter(H: float, N: int, X: list[float]) -> arr:
-    a: arr = zeros(N)
-    b: arr = zeros(N+1)
-    c: arr = zeros(N)
-    d: arr = zeros(N+1)
-    Ai: arr = zeros(N+1)
-    Bi: arr = zeros(N+1)
-    Yi: arr = zeros(N+1)
-    for i in range(1, N):
-        a[i-1] = 1 - (H * Pi[i])/2
-        b[i] = H*H*Qi[i] - 2
-        c[i] = 1+ (H*Pi[i])/2
-        d[i] = H*H*Fi[i]
-    b[0] = H*alpha0 - alpha1
-    c[0] = alpha1
-    d[0] = A*H
-    a[N-1] = -beta1
-    b[N] = H*beta0 + beta1
-    d[N] = B*H
-    Ai[0] = -c[0]/b[0]
-    Bi[0] = d[0] / b[0]
-    for i in range(1,N):
-        Ai[i] = -c[i] / (b[i] + a[i-1]*Ai[i-1])
-        Bi[i] = (d[i] - a[i-1]*Bi[i-1] ) / ( b[i] + a[i-1]*Ai[i-1] )
-    Ai[N] = 0
-    Bi[N] = (d[N] - a[N-1]*Bi[N-1] ) / ( b[N] + a[N-1]*Ai[N-1] )
-    Yi[N] = Bi[N]
-    i = N-1
-    while i >= 0:
-        Yi[i] = Ai[i]*Yi[i+1] + Bi[i]
-        i = i - 1
-    return Yi
+def iter(N: int) -> arr:
+	H = _H(N)
+	X = [ x * _H(N) + From for x in range(N) ]
+	a: arr = zeros(N)
+	b: arr = zeros(N+1)
+	c: arr = zeros(N)
+	d: arr = zeros(N+1)
+	Ai: arr = zeros(N+1)
+	Bi: arr = zeros(N+1)
+	Yi: arr = zeros(N+1)
+	for i in range(1, N):
+		a[i-1] = 1 - (H * Pi[i])/2
+		b[i] = H*H*Qi[i] - 2
+		c[i] = 1+ (H*Pi[i])/2
+		d[i] = H*H*Fi[i]
+	b[0] = H*alpha0 - alpha1
+	c[0] = alpha1
+	d[0] = A*H
+	a[N-1] = -beta1
+	b[N] = H*beta0 + beta1
+	d[N] = B*H
+	Ai[0] = -c[0]/b[0]
+	Bi[0] = d[0] / b[0]
+	for i in range(1,N):
+		Ai[i] = -c[i] / (b[i] + a[i-1]*Ai[i-1])
+		Bi[i] = (d[i] - a[i-1]*Bi[i-1] ) / ( b[i] + a[i-1]*Ai[i-1] )
+	Ai[N] = 0
+	Bi[N] = (d[N] - a[N-1]*Bi[N-1] ) / ( b[N] + a[N-1]*Ai[N-1] )
+	Yi[N] = Bi[N]
+	i = N-1
+	while i >= 0:
+		Yi[i] = Ai[i]*Yi[i+1] + Bi[i]
+		i = i - 1
+	return Yi
 
-def main(_N: int):
-    N = _N
-    H = (To - From) / (N-1) 
-    grid = [ x * H + From for x in range(N) ]
-    for x in grid:
-        Pi.append(p(x))
-        Qi.append(q(x))
-        Fi.append(f(x))
-    Yi = iter(H, N, grid)
+def regen_grid(_N: int) -> list[float]:
+	global Pi, Qi, Fi, grid, N
+	N = _N
+	grid = [ x * _H(_N) + From for x in range(_N) ]
+	Pi = []
+	Qi = []
+	Fi = []
+	for x in grid:
+		Pi.append(p(x))
+		Qi.append(q(x))
+		Fi.append(f(x))
+	return grid
 
-    with open('data.csv', 'w') as ff:
-        for i, x in enumerate(grid):
-            ff.write(f"{x:+02.6f}\t{Yi[i]:+02.6f}\t{Fi[i]:+02.6f}\t{lval(i,Yi,H,N):+02.6f}\t{ASolution(grid[i]):+02.6f}\t{Dy(i, Yi, H, N)}\n")
+def save_csv(_N: int, filename: str):
+	N = _N
+	regen_grid(N)
+	Yi = []
+	Yi = iter(N)
 
+	with open(filename, 'w') as ff:
+		for i, x in enumerate(grid):
+			ff.write(f"{x:+02.6f}\t{Yi[i]:+02.6f}\t{Fi[i]:+02.6f}\t{lval(i,Yi,_H(N),N):+02.6f}\t{ASolution(grid[i]):+02.6f}\t{Dy(i, Yi, _H(N), N)}\n")
 
 if __name__ == '__main__' :
-    print(f"{argv[1]}\n")
-    main( int(argv[1]) )
+	if (len(argv) > 1):
+		save_csv( int(argv[1]), 'data.csv' )
+	else:
+		save_csv( 2, 'data.csv' )
