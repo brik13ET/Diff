@@ -115,7 +115,13 @@ def save_csv(_N: int, filename: str):
 
 	with open(filename, 'w') as ff:
 		for i, x in enumerate(grid):
-			ff.write(f"{x:+02.6f}\t{Yi[i]:+02.6f}\t{Fi[i]:+02.6f}\t{lval(i,Yi,_H(N),N):+02.6f}\t{ASolution(grid[i]):+02.6f}\t{Dy(i, Yi, _H(N), N)}\n")
+			ff.write(
+				f"{x:+02.6f}\t"+
+				f"{Yi[i]:+02.6f}\t"+
+				f"{ASolution(grid[i]):+02.6f}\t"+
+				f"{Fi[i]:+02.6f}\t"+
+				f"{lval(i,Yi,_H(N),N):+02.6f}\n"
+			)
 
 if __name__ == '__main__' :
 	if (len(argv) > 1):

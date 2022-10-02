@@ -14,10 +14,9 @@ def draw_pic(filename: str, out: str):
 		for row in ff:
 			X.append(float(row[0]))
 			Y.append(float(row[1]))
-			F.append(float(row[2]))
-			R.append(float(row[3]))
-			S.append(float(row[4]))
-			E.append(float(row[5]))
+			S.append(float(row[2]))
+			F.append(float(row[3]))
+			R.append(float(row[4]))
 		plt.switch_backend('Agg')
 		plt.rcParams["figure.figsize"] = (15,24)
 		fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
